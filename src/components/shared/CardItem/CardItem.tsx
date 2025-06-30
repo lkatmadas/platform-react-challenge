@@ -20,8 +20,6 @@ const CardItem = <T extends CardItemContent>({
     }
   }
 
-  console.log(item)
-
   return (
     <CardItem
       onClick={() => onItemSelect?.(item)}
