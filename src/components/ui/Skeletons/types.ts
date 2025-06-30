@@ -17,7 +17,7 @@ export type SkeletonCardGridProps = {
 export type SkeletonLoaderProps = {
   status: boolean
   error: unknown | null
-  children?: Exclude<null | undefined | unknown, React.ReactNode>
+  children?: ReactNode
   loader?: ReactNode
   fullScreen?: boolean
   errorFallback?: ReactNode
