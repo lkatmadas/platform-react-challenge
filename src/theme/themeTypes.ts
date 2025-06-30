@@ -1,5 +1,3 @@
-// import type { Theme as EmotionTheme } from '@emotion/react'
-
 export type ThemeMode = 'light' | 'dark'
 
 export interface ThemeContextType {

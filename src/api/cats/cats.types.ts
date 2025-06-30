@@ -4,7 +4,6 @@ export type CatImage = {
   width: number
   height: number
   breeds?: Breed[]
-  //   categories?: Category[];
 }
 
 export type Breed = {
