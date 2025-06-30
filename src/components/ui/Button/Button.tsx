@@ -1,21 +1,19 @@
+import { forwardRef } from 'react'
 import Styled from './Button.styles'
 
-import type { FC } from 'react'
 import type { ButtonProps } from './types'
 
-const Button: FC<ButtonProps> = ({
-  children,
-  variant = 'primary',
-  size = 'default',
-  testId = 'button',
-  ...props
-}) => {
-  const { Button } = Styled
-  return (
-    <Button variant={variant} size={size} {...props} data-testid={testId}>
-      {children}
-    </Button>
-  )
-}
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ children, variant = 'primary', size = 'default', testId = 'button', ...props }, ref) => {
+    const { Button: StyledButton } = Styled
 
+    return (
+      <StyledButton ref={ref} variant={variant} size={size} {...props} data-testid={testId}>
+        {children}
+      </StyledButton>
+    )
+  },
+)
+
+Button.displayName = 'Button'
 export default Button

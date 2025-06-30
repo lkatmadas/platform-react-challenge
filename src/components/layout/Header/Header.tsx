@@ -1,4 +1,4 @@
-import { useState, type FC } from 'react'
+import { useRef, useState, type FC } from 'react'
 import { Link } from 'react-router-dom'
 
 import { Button, ThemeToggle } from '@/components'
@@ -12,11 +12,16 @@ import MenuIcon from '@assets/menu.svg'
 
 const Header: FC = () => {
   const { Header } = Styled
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(prev => !prev)
 
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false)
+    menuButtonRef.current?.focus()
+  }
   return (
     <Header>
       <nav className="header-wrapper" aria-label="Primary Navigation" role="navigation">
@@ -25,12 +30,18 @@ const Header: FC = () => {
         </Link>
 
         <PrimaryNav />
-        {isMobileMenuOpen && <MobileNav onClose={() => setIsMobileMenuOpen(false)} />}
+        {isMobileMenuOpen && <MobileNav onClose={closeMobileMenu} />}
 
         <ThemeToggle className="theme-switcher" />
 
         <div className="main-menu-toggle">
-          <Button type="button" onClick={toggleMobileMenu} className="main-menu-toggle__button">
+          <Button
+            type="button"
+            onClick={toggleMobileMenu}
+            className="main-menu-toggle__button"
+            ref={menuButtonRef}
+            variant="ghost"
+          >
             <span className="main-menu-toggle__sr-label sr-only">Open main menu</span>
             <img src={MenuIcon} alt="Menu Icon" className="main-menu-toggle__icon" />
           </Button>
