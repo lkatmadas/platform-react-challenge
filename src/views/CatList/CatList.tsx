@@ -1,4 +1,4 @@
-import { useEffect, useState, type FC } from 'react'
+import { useEffect, useRef, useState, type FC } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import debounce from 'lodash.debounce'
 
@@ -20,43 +20,63 @@ const CatList: FC = () => {
     usePaginatedCats(10)
 
   const [searchParams, setSearchParams] = useSearchParams()
+  const selectedCatId = searchParams.get('cat') ?? undefined
 
   const cats = data?.pages.flat() ?? []
   const [selectedCat, setSelectedCat] = useState<CatImage | null>(null)
+  const [isModalDismissed, setIsModalDismissed] = useState(false)
+  const { data: fallbackCat = null, isLoading: isFetchingFallbackCat } = useCatImage(selectedCatId)
 
-  const selectedCatId = searchParams.get('cat') ?? undefined
+  const debouncedHoverRef = useRef(
+    debounce(async (cat: CatImage) => {
+      const data = await queryClient.fetchQuery({
+        queryKey: queryKeys.cats.image(cat.id),
+        queryFn: () => fetchCatImageById(cat.id),
+      })
+
+      if (data?.url) {
+        const img = new Image()
+        img.src = data.url
+      }
+    }, 150),
+  )
+
+  const handleCardHover = debouncedHoverRef.current
+
+  useEffect(() => {
+    const debouncedFn = debouncedHoverRef.current
+
+    return () => {
+      debouncedFn.cancel()
+    }
+  }, [])
 
   const handleSelectCat = (cat: CatImage) => {
     const catId = cat.id
-    setSearchParams({ cat: catId })
+    setSearchParams(new URLSearchParams({ cat: catId }))
     setSelectedCat(cat)
+    setIsModalDismissed(false)
   }
 
   const handleCloseModal = () => {
-    searchParams.delete('cat')
-    setSearchParams(searchParams)
+    const newParams = new URLSearchParams(searchParams)
+    newParams.delete('cat')
+    setSearchParams(newParams)
     setSelectedCat(null)
+    setIsModalDismissed(true)
   }
 
-  const { data: fallbackCat = null, isLoading: isFetchingFallbackCat } = useCatImage(selectedCatId)
-
-  const handleCardHover = debounce(async (cat: CatImage) => {
-    const data = await queryClient.fetchQuery({
-      queryKey: queryKeys.cats.image(cat.id),
-      queryFn: () => fetchCatImageById(cat.id),
-    })
-
-    if (data?.url) {
-      const img = new Image()
-      img.src = data.url
-    }
-  }, 150)
-
   useEffect(() => {
-    if (fallbackCat && !selectedCat) {
+    if (fallbackCat && !selectedCat && !isModalDismissed) {
       setSelectedCat(fallbackCat)
     }
-  }, [fallbackCat, selectedCat])
+  }, [fallbackCat, selectedCat, isModalDismissed])
+
+  useEffect(() => {
+    if (selectedCatId) {
+      setIsModalDismissed(false)
+    }
+  }, [selectedCatId])
 
   return (
     <>
