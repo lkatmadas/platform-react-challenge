@@ -26,7 +26,11 @@ const CatModal: FC<CatModalProps> = ({ cat, isError, isLoading, onClose }) => {
   }
 
   return (
-    <Modal isOpen={!!cat} onClose={onClose} ariaLabel={`Preview cat ${cat}`}>
+    <Modal
+      isOpen={!!cat}
+      onClose={onClose}
+      ariaLabel={`Preview cat ${cat?.breeds?.[0]?.name || cat?.id || 'Unknown'}`}
+    >
       <Skeletons.Loader error={isError} status={isLoading} loader={<Skeletons.Card />}>
         {cat && (
           <FeaturedImageWrapper>

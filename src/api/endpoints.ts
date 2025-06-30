@@ -28,7 +28,7 @@ export const dynamicEndpoints = {
     size = 'med',
     mime_types = 'jpg',
   }: RandomCatParams) =>
-    `${API_ENDPOINTS.images.search}?limit=${limit}&page=${page}&has_breeds=true&order=${order}&size=${size}&mime_types=${mime_types}&format=json`,
+    `${API_ENDPOINTS.images.search}?limit=${limit}&page=${page}&has_breeds=false&order=${order}&size=${size}&mime_types=${mime_types}&format=json`,
 
   breeds: ({ limit, page = 0 }: { limit?: number; page?: number } = {}) => {
     const searchParams = new URLSearchParams()
